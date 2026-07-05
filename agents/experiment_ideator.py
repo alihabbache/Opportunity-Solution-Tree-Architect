@@ -81,7 +81,13 @@ Return a JSON array:
         if match:
             result = json.loads(match.group())
         else:
-            raise ValueError(f"Experiment Ideator: Could not parse JSON from Gemini response:\n{response}")
+            raise ValueError(f"Experiment Ideator: Could not parse JSON from response:\n{response}")
+
+    # Groq json_object mode wraps arrays in a dict — unwrap if needed
+    if isinstance(result, dict):
+        lists = [v for v in result.values() if isinstance(v, list)]
+        if lists:
+            result = lists[0]
 
     print(f"[experiment_ideator] Generated {len(result)} experiments for: {opportunity['id']}")
     return result

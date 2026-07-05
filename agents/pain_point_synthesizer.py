@@ -76,7 +76,13 @@ Return a JSON array with 3 to 7 opportunities:
         if match:
             result = json.loads(match.group())
         else:
-            raise ValueError(f"Pain Point Synthesizer: Could not parse JSON from Gemini response:\n{response}")
+            raise ValueError(f"Pain Point Synthesizer: Could not parse JSON from response:\n{response}")
+
+    # Groq json_object mode wraps arrays in a dict — unwrap if needed
+    if isinstance(result, dict):
+        lists = [v for v in result.values() if isinstance(v, list)]
+        if lists:
+            result = lists[0]
 
     print(f"[pain_point_synthesizer] Found {len(result)} opportunity branches.")
     return result
