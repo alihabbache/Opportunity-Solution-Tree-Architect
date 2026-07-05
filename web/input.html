@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OST Architect — New Input</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      background: #f7f8fa;
+      color: #1f2328;
+      min-height: 100vh;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      height: 52px;
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .nav-title { font-size: 15px; font-weight: 600; }
+    .nav-links a {
+      font-size: 12px;
+      color: #3b82d4;
+      text-decoration: none;
+      margin-left: 16px;
+    }
+    .nav-links a:hover { text-decoration: underline; }
+
+    .page {
+      max-width: 720px;
+      margin: 40px auto;
+      padding: 0 20px 60px;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #57606a;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .field-label {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .field-hint {
+      font-size: 12px;
+      color: #57606a;
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      font-family: inherit;
+      font-size: 13px;
+      line-height: 1.6;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      background: #f7f8fa;
+      color: #1f2328;
+      resize: vertical;
+      transition: border-color 0.15s;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #3b82d4;
+      background: #ffffff;
+    }
+
+    .pat-section {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+    }
+    .pat-section .field-label { color: #92400e; }
+    .pat-section .field-hint { color: #78350f; }
+
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 9px 12px;
+      font-family: inherit;
+      font-size: 13px;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      background: #ffffff;
+      color: #1f2328;
+    }
+    input:focus {
+      outline: none;
+      border-color: #3b82d4;
+    }
+
+    .pat-actions {
+      margin-top: 8px;
+      display: flex;
+      gap: 12px;
+    }
+    .pat-actions button {
+      font-size: 12px;
+      background: none;
+      border: none;
+      color: #3b82d4;
+      cursor: pointer;
+      padding: 0;
+    }
+    .pat-actions button:hover { text-decoration: underline; }
+
+    .submit-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    button.primary {
+      padding: 10px 24px;
+      background: #1f2328;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    button.primary:hover { background: #32383f; }
+    button.primary:disabled { background: #8c959f; cursor: not-allowed; }
+
+    #status-msg {
+      font-size: 13px;
+      color: #57606a;
+    }
+    #status-msg.success { color: #1a7f37; }
+    #status-msg.error   { color: #cf222e; }
+
+    .info-box {
+      background: #f0f6ff;
+      border: 1px solid #c8e1ff;
+      border-radius: 6px;
+      padding: 14px 16px;
+      font-size: 12px;
+      color: #0550ae;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .info-box strong { font-weight: 600; }
+
+    .run-link {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 13px;
+      color: #3b82d4;
+      text-decoration: none;
+    }
+    .run-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-title">&#127795; OST Architect</span>
+  <span class="nav-links">
+    <a href="index.html">&#8592; View Tree</a>
+    <a href="https://github.com/alihabbache/Opportunity-Solution-Tree-Architect" target="_blank">GitHub</a>
+  </span>
+</nav>
+
+<div class="page">
+  <h1>New Input</h1>
+  <p class="subtitle">
+    Paste your OKR, interview notes, and optional context below.<br>
+    Submitting will trigger the OST pipeline on GitHub Actions and update your tree.
+  </p>
+
+  <div class="info-box">
+    <strong>How this works:</strong> Your text is sent directly to the GitHub Actions workflow via the GitHub API.
+    Nothing is stored here — data goes straight to GitHub and the Gemini API.
+    The generated tree will be live at your GitHub Pages URL within ~2 minutes.
+  </div>
+
+  <!-- PAT Section -->
+  <div class="pat-section">
+    <label class="field-label" for="pat-input">&#128274; GitHub Personal Access Token (PAT)</label>
+    <p class="field-hint">
+      Required to trigger the pipeline. Needs <code>repo</code> + <code>workflow</code> scope.<br>
+      Stored only in your browser's localStorage — never sent anywhere except GitHub's API.
+      <a href="https://github.com/settings/tokens/new?scopes=repo,workflow&description=OST+Architect" target="_blank" style="color:#92400e;">Generate a PAT</a>
+    </p>
+    <input type="password" id="pat-input" placeholder="ghp_..." autocomplete="off" />
+    <div class="pat-actions">
+      <button id="save-pat-btn">Save to localStorage</button>
+      <button id="clear-pat-btn">Clear saved PAT</button>
+    </div>
+  </div>
+
+  <!-- OKR -->
+  <div class="card">
+    <label class="field-label" for="okr-text">&#127919; OKR / Business Outcome <span style="color:#cf222e;">*</span></label>
+    <p class="field-hint">Your Objective and Key Results, or a plain description of the business outcome you are pursuing.</p>
+    <textarea id="okr-text" rows="8" placeholder="## Objective&#10;Increase weekly active users by 20% in Q3 2025.&#10;&#10;## Key Results&#10;- KR1: Reduce 7-day churn from 35% to 20%&#10;- KR2: Increase D7 retention to 55%"></textarea>
+  </div>
+
+  <!-- Interviews -->
+  <div class="card">
+    <label class="field-label" for="interview-text">&#128172; User Interview Notes <span style="color:#cf222e;">*</span></label>
+    <p class="field-hint">Paste raw interview notes, quotes, or summaries. Include as much detail as you have.</p>
+    <textarea id="interview-text" rows="12" placeholder="Participant: Sarah, Designer&#10;---&#10;&quot;I spend 3-4 minutes every morning just figuring out where I left off...&quot;"></textarea>
+  </div>
+
+  <!-- Context -->
+  <div class="card">
+    <label class="field-label" for="context-text">&#128218; Mission / Vision / Product Goals <span style="color:#57606a; font-weight:400;">(optional)</span></label>
+    <p class="field-hint">Paste your product strategy, mission statement, or product goals. Used to check OKR alignment.</p>
+    <textarea id="context-text" rows="6" placeholder="Mission: Help distributed teams do their best work together..."></textarea>
+  </div>
+
+  <!-- Submit -->
+  <div class="submit-row">
+    <button class="primary" id="submit-btn">&#9654; Trigger Pipeline</button>
+    <span id="status-msg"></span>
+  </div>
+
+  <a class="run-link" id="run-link" href="https://github.com/alihabbache/Opportunity-Solution-Tree-Architect/actions" target="_blank" style="display:none;">
+    View pipeline run on GitHub Actions &#8594;
+  </a>
+</div>
+
+<script>
+const REPO_OWNER = "alihabbache";
+const REPO_NAME  = "Opportunity-Solution-Tree-Architect";
+const WORKFLOW_FILE = "generate-ost.yml";
+const PAT_KEY = "ost_architect_pat";
+
+// ── PAT persistence ────────────────────────────────────────────────────────
+const patInput = document.getElementById("pat-input");
+
+const saved = localStorage.getItem(PAT_KEY);
+if (saved) patInput.value = saved;
+
+document.getElementById("save-pat-btn").addEventListener("click", () => {
+  const val = patInput.value.trim();
+  if (!val) { alert("Enter a PAT first."); return; }
+  localStorage.setItem(PAT_KEY, val);
+  setStatus("PAT saved to localStorage.", "success");
+});
+
+document.getElementById("clear-pat-btn").addEventListener("click", () => {
+  localStorage.removeItem(PAT_KEY);
+  patInput.value = "";
+  setStatus("PAT cleared.", "");
+});
+
+// ── Submit ─────────────────────────────────────────────────────────────────
+document.getElementById("submit-btn").addEventListener("click", async () => {
+  const pat      = patInput.value.trim();
+  const okr      = document.getElementById("okr-text").value.trim();
+  const interview = document.getElementById("interview-text").value.trim();
+  const context  = document.getElementById("context-text").value.trim();
+
+  if (!pat) {
+    setStatus("A GitHub PAT is required to trigger the pipeline.", "error");
+    return;
+  }
+  if (!okr) {
+    setStatus("OKR / Business Outcome text is required.", "error");
+    return;
+  }
+  if (!interview) {
+    setStatus("User Interview Notes are required.", "error");
+    return;
+  }
+
+  const btn = document.getElementById("submit-btn");
+  btn.disabled = true;
+  setStatus("Triggering pipeline...", "");
+
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/${WORKFLOW_FILE}/dispatches`;
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Accept": "application/vnd.github+json",
+        "Authorization": "Bearer " + pat,
+        "X-GitHub-Api-Version": "2022-11-28",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ref: "main",
+        inputs: {
+          okr_text:       okr,
+          interview_text: interview,
+          context_text:   context,
+        },
+      }),
+    });
+
+    if (response.status === 204) {
+      setStatus("Pipeline triggered! Your tree will be ready in ~2 minutes.", "success");
+      document.getElementById("run-link").style.display = "inline-block";
+      // Auto-save PAT on success
+      localStorage.setItem(PAT_KEY, pat);
+    } else {
+      const body = await response.json().catch(() => ({}));
+      const msg = body.message || `HTTP ${response.status}`;
+      setStatus("GitHub API error: " + msg, "error");
+    }
+  } catch (err) {
+    setStatus("Network error: " + err.message, "error");
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+// ── Helper ────────────────────────────────────────────────────────────────
+function setStatus(msg, type) {
+  const el = document.getElementById("status-msg");
+  el.textContent = msg;
+  el.className = type;
+}
+</script>
+
+</body>
+</html>

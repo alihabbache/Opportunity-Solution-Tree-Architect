@@ -1,0 +1,96 @@
+{
+  "name": "Increase Weekly Active Users",
+  "type": "outcome",
+  "meta": {
+    "metric": "20% increase in WAU by end of Q3",
+    "time_horizon": "Q3 2025",
+    "alignment": "Supports product vision of becoming the daily tool for remote teams",
+    "confidence": "High"
+  },
+  "generated_at": "2025-01-01T00:00:00+00:00",
+  "children": [
+    {
+      "name": "Users struggle to find relevant content quickly after logging in",
+      "type": "opportunity",
+      "meta": {
+        "evidence": "6 out of 8 users mentioned spending more than 2 minutes looking for where they left off",
+        "customer_segment": "Power users (daily active)",
+        "id": "opp_1"
+      },
+      "children": [
+        {
+          "name": "If we build a personalized 'Continue where you left off' dashboard section, then power users will return daily because they feel instantly oriented",
+          "type": "experiment",
+          "meta": {
+            "experiment": "Build a clickable prototype of the new dashboard section and test with 10 users in a moderated session",
+            "signal": "Time-to-first-action drops below 30 seconds for 70% of test users",
+            "effort": "Medium",
+            "id": "opp_1_exp_1"
+          }
+        },
+        {
+          "name": "If we add a global search with recent items, then users will spend less time navigating and more time doing work",
+          "type": "experiment",
+          "meta": {
+            "experiment": "A/B test: 50% of users see a search bar with recent items pinned at the top",
+            "signal": "Session depth (pages visited) increases by 15% in the test group",
+            "effort": "Small",
+            "id": "opp_1_exp_2"
+          }
+        }
+      ]
+    },
+    {
+      "name": "New users don't understand the core value within the first session",
+      "type": "opportunity",
+      "meta": {
+        "evidence": "4 users in onboarding interviews said they weren't sure what to do after signing up",
+        "customer_segment": "New users (first 7 days)",
+        "id": "opp_2"
+      },
+      "children": [
+        {
+          "name": "If we create an interactive onboarding checklist, then new users will complete the core workflow in session 1 because they have clear next steps",
+          "type": "experiment",
+          "meta": {
+            "experiment": "Fake door test: show a 'Getting Started' checklist to new signups and track completion rate",
+            "signal": "Day-1 core workflow completion rate increases from 20% to 40%",
+            "effort": "Small",
+            "id": "opp_2_exp_1"
+          }
+        },
+        {
+          "name": "If we send a contextual tip email 24h after signup, then users will return and discover a key feature they missed",
+          "type": "experiment",
+          "meta": {
+            "experiment": "Send a plain-text email with one actionable tip to a 50% sample of new signups",
+            "signal": "Day-2 return rate increases by 10 percentage points in the email group",
+            "effort": "Small",
+            "id": "opp_2_exp_2"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Team leads can't see their team's progress at a glance",
+      "type": "opportunity",
+      "meta": {
+        "evidence": "All 3 team lead interviews cited lack of visibility as their top frustration",
+        "customer_segment": "Team leads / managers",
+        "id": "opp_3"
+      },
+      "children": [
+        {
+          "name": "If we build a team activity digest email (weekly), then team leads will stay engaged without needing to log in daily",
+          "type": "experiment",
+          "meta": {
+            "experiment": "Manually curate and send a weekly digest to 5 team leads for 4 weeks, then survey them",
+            "signal": "4 out of 5 team leads rate the digest as 'very useful' and want it automated",
+            "effort": "Small",
+            "id": "opp_3_exp_1"
+          }
+        }
+      ]
+    }
+  ]
+}

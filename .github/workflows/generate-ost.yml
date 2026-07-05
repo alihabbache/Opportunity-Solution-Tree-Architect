@@ -1,0 +1,87 @@
+name: Generate OST
+
+on:
+  # Manual trigger from GitHub UI — also accepts pasted text from the web form
+  workflow_dispatch:
+    inputs:
+      okr_text:
+        description: "Paste your OKR / business outcome text (optional — overrides inputs/okr.md)"
+        required: false
+        default: ""
+      interview_text:
+        description: "Paste your user interview notes (optional — overrides inputs/interviews/)"
+        required: false
+        default: ""
+      context_text:
+        description: "Paste mission/vision/product goals (optional — overrides inputs/context/)"
+        required: false
+        default: ""
+
+  # Auto-trigger when input files change
+  push:
+    paths:
+      - "inputs/**"
+
+permissions:
+  contents: write  # Required for the commit-back step
+
+jobs:
+  generate-ost:
+    runs-on: ubuntu-latest
+    name: Run OST Agent Pipeline
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run OST Agent Pipeline
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          INPUT_OKR_TEXT: ${{ github.event.inputs.okr_text }}
+          INPUT_INTERVIEW_TEXT: ${{ github.event.inputs.interview_text }}
+          INPUT_CONTEXT_TEXT: ${{ github.event.inputs.context_text }}
+        run: python agents/orchestrator.py
+
+      - name: Commit generated tree back to repo
+        run: |
+          git config user.name "OST Architect Bot"
+          git config user.email "actions@github.com"
+          git add web/tree_data.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit — tree_data.json is up to date."
+          else
+            git commit -m "chore: regenerate OST tree [skip ci]"
+            git push
+          fi
+
+      - name: Print OST summary
+        run: |
+          echo "## OST Generation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          python -c "
+          import json
+          with open('web/tree_data.json') as f:
+              tree = json.load(f)
+          opportunities = tree.get('children', [])
+          total_exp = sum(len(o.get('children', [])) for o in opportunities)
+          print(f'| Field | Value |')
+          print(f'|---|---|')
+          print(f'| **Outcome** | {tree[\"name\"]} |')
+          print(f'| **Metric** | {tree.get(\"meta\", {}).get(\"metric\", \"N/A\")} |')
+          print(f'| **Opportunities** | {len(opportunities)} |')
+          print(f'| **Experiments** | {total_exp} |')
+          print(f'| **Generated at** | {tree.get(\"generated_at\", \"N/A\")} |')
+          " >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🌳 View your tree at: https://alihabbache.github.io/Opportunity-Solution-Tree-Architect/" >> $GITHUB_STEP_SUMMARY
