@@ -295,7 +295,7 @@ const WORKFLOW_FILE = "generate-ost.yml";
 const PAT_KEY = "ost_architect_pat";
 
 // SHA-256 of "OSTArchitect2025"
-const EXPECTED_HASH = "4fa88c6a09f238139bc56c65ce1e7ce10458f45b85fdb59b30e5a902f80335ca";
+const EXPECTED_HASH = "59128aad103d8a73a10d2d5f8bb537db000e5d263241cac57c279be6bcd0443f";
 
 // ── Passphrase gate ────────────────────────────────────────────────────────
 async function sha256hex(str) {
@@ -308,6 +308,9 @@ async function sha256hex(str) {
 function unlockForm() {
   document.getElementById("passphrase-gate").style.display = "none";
   document.getElementById("main-form").style.display = "block";
+  // Load saved PAT only after form is visible
+  const saved = sessionStorage.getItem(PAT_KEY);
+  if (saved) document.getElementById("pat-input").value = saved;
 }
 
 // Check if already unlocked this session
@@ -337,18 +340,15 @@ if (sessionStorage.getItem("ost_unlocked") === "1") {
 // ── PAT persistence ────────────────────────────────────────────────────────
 const patInput = document.getElementById("pat-input");
 
-const saved = localStorage.getItem(PAT_KEY);
-if (saved) patInput.value = saved;
-
 document.getElementById("save-pat-btn").addEventListener("click", () => {
   const val = patInput.value.trim();
   if (!val) { alert("Enter a PAT first."); return; }
-  localStorage.setItem(PAT_KEY, val);
-  setStatus("PAT saved to localStorage.", "success");
+  sessionStorage.setItem(PAT_KEY, val);
+  setStatus("PAT saved for this session.", "success");
 });
 
 document.getElementById("clear-pat-btn").addEventListener("click", () => {
-  localStorage.removeItem(PAT_KEY);
+  sessionStorage.removeItem(PAT_KEY);
   patInput.value = "";
   setStatus("PAT cleared.", "");
 });
@@ -413,8 +413,8 @@ document.getElementById("submit-btn").addEventListener("click", async () => {
     if (response.status === 204) {
       setStatus("Pipeline triggered! Your tree will be ready in ~2 minutes.", "success");
       document.getElementById("run-link").style.display = "inline-block";
-      // Auto-save PAT on success
-      localStorage.setItem(PAT_KEY, pat);
+      // Auto-save PAT for this session
+      sessionStorage.setItem(PAT_KEY, pat);
     } else {
       const body = await response.json().catch(() => ({}));
       const msg = body.message || `HTTP ${response.status}`;
