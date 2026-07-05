@@ -89,6 +89,13 @@
       background: #ffffff;
     }
 
+    .char-counter {
+      font-size: 11px;
+      color: #57606a;
+      text-align: right;
+      margin-top: 4px;
+    }
+
     .pat-section {
       background: #fffbeb;
       border: 1px solid #fde68a;
@@ -177,6 +184,22 @@
       text-decoration: none;
     }
     .run-link:hover { text-decoration: underline; }
+
+    #passphrase-gate {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+    }
+    #passphrase-gate .field-label { color: #92400e; }
+    #passphrase-gate .field-hint  { color: #78350f; }
+    #passphrase-error {
+      font-size: 12px;
+      color: #cf222e;
+      margin-top: 6px;
+      min-height: 16px;
+    }
   </style>
 </head>
 <body>
@@ -196,57 +219,73 @@
     Submitting will trigger the OST pipeline on GitHub Actions and update your tree.
   </p>
 
-  <div class="info-box">
-    <strong>How this works:</strong> Your text is sent directly to the GitHub Actions workflow via the GitHub API.
-    Nothing is stored here — data goes straight to GitHub and the Gemini API.
-    The generated tree will be live at your GitHub Pages URL within ~2 minutes.
+  <!-- Passphrase Gate -->
+  <div id="passphrase-gate">
+    <label class="field-label" for="passphrase-input">&#128272; Access Passphrase</label>
+    <p class="field-hint">Enter the access passphrase to unlock the pipeline.</p>
+    <input type="password" id="passphrase-input" placeholder="Passphrase..." autocomplete="off" />
+    <div id="passphrase-error"></div>
   </div>
 
-  <!-- PAT Section -->
-  <div class="pat-section">
-    <label class="field-label" for="pat-input">&#128274; GitHub Personal Access Token (PAT)</label>
-    <p class="field-hint">
-      Required to trigger the pipeline. Needs <code>repo</code> + <code>workflow</code> scope.<br>
-      Stored only in your browser's localStorage — never sent anywhere except GitHub's API.
-      <a href="https://github.com/settings/tokens/new?scopes=repo,workflow&description=OST+Architect" target="_blank" style="color:#92400e;">Generate a PAT</a>
-    </p>
-    <input type="password" id="pat-input" placeholder="ghp_..." autocomplete="new-password" />
-    <div class="pat-actions">
-      <button id="save-pat-btn">Save to localStorage</button>
-      <button id="clear-pat-btn">Clear saved PAT</button>
+  <!-- Main form — hidden until passphrase verified -->
+  <div id="main-form" style="display:none;">
+
+    <div class="info-box">
+      <strong>How this works:</strong> Your text is sent directly to the GitHub Actions workflow via the GitHub API.
+      Nothing is stored here — data goes straight to GitHub and the Groq API (Llama 3.3 70B).
+      The generated tree will be live at your GitHub Pages URL within ~2 minutes.
     </div>
-  </div>
 
-  <!-- OKR -->
-  <div class="card">
-    <label class="field-label" for="okr-text">&#127919; OKR / Business Outcome <span style="color:#cf222e;">*</span></label>
-    <p class="field-hint">Your Objective and Key Results, or a plain description of the business outcome you are pursuing.</p>
-    <textarea id="okr-text" rows="8" placeholder="## Objective&#10;Increase weekly active users by 20% in Q3 2025.&#10;&#10;## Key Results&#10;- KR1: Reduce 7-day churn from 35% to 20%&#10;- KR2: Increase D7 retention to 55%"></textarea>
-  </div>
+    <!-- PAT Section -->
+    <div class="pat-section">
+      <label class="field-label" for="pat-input">&#128274; GitHub Personal Access Token (PAT)</label>
+      <p class="field-hint">
+        Required to trigger the pipeline. Needs <code>repo</code> + <code>workflow</code> scope.<br>
+        Stored only in your browser's localStorage — never sent anywhere except GitHub's API.
+        <a href="https://github.com/settings/tokens/new?scopes=repo,workflow&description=OST+Architect" target="_blank" style="color:#92400e;">Generate a PAT</a>
+      </p>
+      <input type="password" id="pat-input" placeholder="ghp_..." autocomplete="new-password" />
+      <div class="pat-actions">
+        <button id="save-pat-btn">Save to localStorage</button>
+        <button id="clear-pat-btn">Clear saved PAT</button>
+      </div>
+    </div>
 
-  <!-- Interviews -->
-  <div class="card">
-    <label class="field-label" for="interview-text">&#128172; User Interview Notes <span style="color:#cf222e;">*</span></label>
-    <p class="field-hint">Paste raw interview notes, quotes, or summaries. Include as much detail as you have.</p>
-    <textarea id="interview-text" rows="12" placeholder="Participant: Sarah, Designer&#10;---&#10;&quot;I spend 3-4 minutes every morning just figuring out where I left off...&quot;"></textarea>
-  </div>
+    <!-- OKR -->
+    <div class="card">
+      <label class="field-label" for="okr-text">&#127919; OKR / Business Outcome <span style="color:#cf222e;">*</span></label>
+      <p class="field-hint">Your Objective and Key Results, or a plain description of the business outcome you are pursuing.</p>
+      <textarea id="okr-text" rows="8" maxlength="8000" placeholder="## Objective&#10;Increase weekly active users by 20% in Q3 2025.&#10;&#10;## Key Results&#10;- KR1: Reduce 7-day churn from 35% to 20%&#10;- KR2: Increase D7 retention to 55%"></textarea>
+      <div class="char-counter"><span id="okr-count">0</span> / 8000</div>
+    </div>
 
-  <!-- Context -->
-  <div class="card">
-    <label class="field-label" for="context-text">&#128218; Mission / Vision / Product Goals <span style="color:#57606a; font-weight:400;">(optional)</span></label>
-    <p class="field-hint">Paste your product strategy, mission statement, or product goals. Used to check OKR alignment.</p>
-    <textarea id="context-text" rows="6" placeholder="Mission: Help distributed teams do their best work together..."></textarea>
-  </div>
+    <!-- Interviews -->
+    <div class="card">
+      <label class="field-label" for="interview-text">&#128172; User Interview Notes <span style="color:#cf222e;">*</span></label>
+      <p class="field-hint">Paste raw interview notes, quotes, or summaries. Include as much detail as you have.</p>
+      <textarea id="interview-text" rows="12" maxlength="12000" placeholder="Participant: Sarah, Designer&#10;---&#10;&quot;I spend 3-4 minutes every morning just figuring out where I left off...&quot;"></textarea>
+      <div class="char-counter"><span id="interview-count">0</span> / 12000</div>
+    </div>
 
-  <!-- Submit -->
-  <div class="submit-row">
-    <button class="primary" id="submit-btn">&#9654; Trigger Pipeline</button>
-    <span id="status-msg"></span>
-  </div>
+    <!-- Context -->
+    <div class="card">
+      <label class="field-label" for="context-text">&#128218; Mission / Vision / Product Goals <span style="color:#57606a; font-weight:400;">(optional)</span></label>
+      <p class="field-hint">Paste your product strategy, mission statement, or product goals. Used to check OKR alignment.</p>
+      <textarea id="context-text" rows="6" maxlength="4000" placeholder="Mission: Help distributed teams do their best work together..."></textarea>
+      <div class="char-counter"><span id="context-count">0</span> / 4000</div>
+    </div>
 
-  <a class="run-link" id="run-link" href="https://github.com/alihabbache/Opportunity-Solution-Tree-Architect/actions" target="_blank" style="display:none;">
-    View pipeline run on GitHub Actions &#8594;
-  </a>
+    <!-- Submit -->
+    <div class="submit-row">
+      <button class="primary" id="submit-btn">&#9654; Trigger Pipeline</button>
+      <span id="status-msg"></span>
+    </div>
+
+    <a class="run-link" id="run-link" href="https://github.com/alihabbache/Opportunity-Solution-Tree-Architect/actions" target="_blank" style="display:none;">
+      View pipeline run on GitHub Actions &#8594;
+    </a>
+
+  </div><!-- /#main-form -->
 </div>
 
 <script>
@@ -254,6 +293,46 @@ const REPO_OWNER = "alihabbache";
 const REPO_NAME  = "Opportunity-Solution-Tree-Architect";
 const WORKFLOW_FILE = "generate-ost.yml";
 const PAT_KEY = "ost_architect_pat";
+
+// SHA-256 of "OSTArchitect2025"
+const EXPECTED_HASH = "4fa88c6a09f238139bc56c65ce1e7ce10458f45b85fdb59b30e5a902f80335ca";
+
+// ── Passphrase gate ────────────────────────────────────────────────────────
+async function sha256hex(str) {
+  const msgBuffer = new TextEncoder().encode(str);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+function unlockForm() {
+  document.getElementById("passphrase-gate").style.display = "none";
+  document.getElementById("main-form").style.display = "block";
+}
+
+// Check if already unlocked this session
+if (sessionStorage.getItem("ost_unlocked") === "1") {
+  unlockForm();
+} else {
+  const passphraseInput = document.getElementById("passphrase-input");
+  const passphraseError = document.getElementById("passphrase-error");
+
+  passphraseInput.addEventListener("input", async () => {
+    const val = passphraseInput.value;
+    if (!val) {
+      passphraseError.textContent = "";
+      return;
+    }
+    const hash = await sha256hex(val);
+    if (hash === EXPECTED_HASH) {
+      passphraseError.textContent = "";
+      sessionStorage.setItem("ost_unlocked", "1");
+      unlockForm();
+    } else {
+      passphraseError.textContent = "Incorrect passphrase.";
+    }
+  });
+}
 
 // ── PAT persistence ────────────────────────────────────────────────────────
 const patInput = document.getElementById("pat-input");
@@ -273,6 +352,18 @@ document.getElementById("clear-pat-btn").addEventListener("click", () => {
   patInput.value = "";
   setStatus("PAT cleared.", "");
 });
+
+// ── Char counters ──────────────────────────────────────────────────────────
+function wireCounter(textareaId, counterId) {
+  const ta = document.getElementById(textareaId);
+  const counter = document.getElementById(counterId);
+  ta.addEventListener("input", () => {
+    counter.textContent = ta.value.length;
+  });
+}
+wireCounter("okr-text",       "okr-count");
+wireCounter("interview-text", "interview-count");
+wireCounter("context-text",   "context-count");
 
 // ── Submit ─────────────────────────────────────────────────────────────────
 document.getElementById("submit-btn").addEventListener("click", async () => {
