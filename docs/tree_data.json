@@ -1,93 +1,235 @@
 {
-  "name": "Increase Weekly Active Users",
+  "name": "Increase the number of weekly active users to drive business growth",
   "type": "outcome",
   "meta": {
-    "metric": "20% increase in WAU by end of Q3",
-    "time_horizon": "Q3 2025",
-    "alignment": "Supports product vision of becoming the daily tool for remote teams",
+    "metric": "Reach 10,200 weekly active users",
+    "time_horizon": "End of Q3 2025",
+    "alignment": "Directly supports the company mission by enabling more teams to work effectively together, and aligns with the product vision of becoming the single source of truth for remote and hybrid teams",
     "confidence": "High"
   },
-  "generated_at": "2025-01-01T00:00:00+00:00",
+  "generated_at": "2026-07-05T20:26:11.711441+00:00",
   "children": [
     {
-      "name": "Users struggle to find relevant content quickly after logging in",
+      "name": "I want to easily find what I need when I log in, without feeling overwhelmed by information",
       "type": "opportunity",
       "meta": {
-        "evidence": "6 out of 8 users mentioned spending more than 2 minutes looking for where they left off",
-        "customer_segment": "Power users (daily active)",
+        "evidence": "I open it first thing in the morning and immediately get confused about where to pick up from yesterday.",
+        "customer_segment": "All users",
         "id": "opp_1"
       },
       "children": [
         {
-          "name": "If we build a personalized 'Continue where you left off' dashboard section, then power users will return daily because they feel instantly oriented",
+          "name": "If we build a personalized dashboard, then all users will quickly find what they need when they log in because it will show them relevant information from where they left off yesterday",
           "type": "experiment",
           "meta": {
-            "experiment": "Build a clickable prototype of the new dashboard section and test with 10 users in a moderated session",
-            "signal": "Time-to-first-action drops below 30 seconds for 70% of test users",
-            "effort": "Medium",
+            "experiment": "Create a clickable prototype of the dashboard and conduct A/B testing with 10% of the user base",
+            "signal": "Increase in time spent on the platform within the first 10 minutes of login, decrease in bounce rate",
+            "effort": "Small",
             "id": "opp_1_exp_1"
           }
         },
         {
-          "name": "If we add a global search with recent items, then users will spend less time navigating and more time doing work",
+          "name": "If we implement a 'continue from yesterday' feature, then all users will easily pick up from where they left off because it will provide a clear call-to-action",
           "type": "experiment",
           "meta": {
-            "experiment": "A/B test: 50% of users see a search bar with recent items pinned at the top",
-            "signal": "Session depth (pages visited) increases by 15% in the test group",
+            "experiment": "Conduct a fake door test by adding a 'continue from yesterday' button that doesn't actually work, and measure click-through rates",
+            "signal": "High click-through rate on the fake button, positive user feedback in surveys",
             "effort": "Small",
             "id": "opp_1_exp_2"
+          }
+        },
+        {
+          "name": "If we provide a daily summary email, then all users will be more likely to log in and engage with the platform because they will be reminded of their progress and tasks",
+          "type": "experiment",
+          "meta": {
+            "experiment": "Send a daily summary email to 20% of the user base for one week, and measure open rates, click-through rates, and subsequent login rates",
+            "signal": "Increase in open rates, click-through rates, and login rates among the test group compared to the control group",
+            "effort": "Medium",
+            "id": "opp_1_exp_3"
           }
         }
       ]
     },
     {
-      "name": "New users don't understand the core value within the first session",
+      "name": "I need a simple way to get started with the product, with clear guidance on the first steps",
       "type": "opportunity",
       "meta": {
-        "evidence": "4 users in onboarding interviews said they weren't sure what to do after signing up",
-        "customer_segment": "New users (first 7 days)",
+        "evidence": "Honestly, confusing. I signed up, landed on a blank dashboard, and had no idea what to do.",
+        "customer_segment": "New users",
         "id": "opp_2"
       },
       "children": [
         {
-          "name": "If we create an interactive onboarding checklist, then new users will complete the core workflow in session 1 because they have clear next steps",
+          "name": "If we build an interactive onboarding tour, then new users will complete their first task within 5 minutes because they will have clear guidance on the first steps",
           "type": "experiment",
           "meta": {
-            "experiment": "Fake door test: show a 'Getting Started' checklist to new signups and track completion rate",
-            "signal": "Day-1 core workflow completion rate increases from 20% to 40%",
+            "experiment": "Create a clickable prototype of the onboarding tour and measure the completion rate of the first task within 5 minutes",
+            "signal": "Increase in the percentage of new users completing their first task within 5 minutes",
             "effort": "Small",
             "id": "opp_2_exp_1"
           }
         },
         {
-          "name": "If we send a contextual tip email 24h after signup, then users will return and discover a key feature they missed",
+          "name": "If we provide a curated list of getting-started resources, then new users will engage with the product for at least 10 minutes because they will have a clear understanding of the product's capabilities",
           "type": "experiment",
           "meta": {
-            "experiment": "Send a plain-text email with one actionable tip to a 50% sample of new signups",
-            "signal": "Day-2 return rate increases by 10 percentage points in the email group",
+            "experiment": "Create a fake door test by adding a 'Getting Started' button that links to a curated list of resources and measure the click-through rate and subsequent engagement time",
+            "signal": "Increase in the average engagement time of new users",
             "effort": "Small",
             "id": "opp_2_exp_2"
+          }
+        },
+        {
+          "name": "If we offer personalized product recommendations based on user interests, then new users will explore at least 3 features within the first week because they will be more likely to find value in the product",
+          "type": "experiment",
+          "meta": {
+            "experiment": "Conduct an A/B test by offering personalized product recommendations to a subset of new users and measuring the feature exploration rate",
+            "signal": "Increase in the percentage of new users exploring at least 3 features within the first week",
+            "effort": "Medium",
+            "id": "opp_2_exp_3"
+          }
+        },
+        {
+          "name": "If we send a series of guided email notifications, then new users will complete their profile and start using the product within 3 days because they will receive timely reminders and guidance",
+          "type": "experiment",
+          "meta": {
+            "experiment": "Create an email campaign with guided notifications and measure the profile completion rate and subsequent product usage",
+            "signal": "Increase in the percentage of new users completing their profile and starting to use the product within 3 days",
+            "effort": "Small",
+            "id": "opp_2_exp_4"
           }
         }
       ]
     },
     {
-      "name": "Team leads can't see their team's progress at a glance",
+      "name": "I struggle to navigate the product and find specific features without excessive clicking",
       "type": "opportunity",
       "meta": {
-        "evidence": "All 3 team lead interviews cited lack of visibility as their top frustration",
-        "customer_segment": "Team leads / managers",
+        "evidence": "The navigation. I know the feature is there somewhere but I can't find it without clicking through three menus.",
+        "customer_segment": "All users",
         "id": "opp_3"
       },
       "children": [
         {
-          "name": "If we build a team activity digest email (weekly), then team leads will stay engaged without needing to log in daily",
+          "name": "If we build a prominent search bar, then all users will quickly find specific features without excessive clicking because it reduces navigation complexity",
           "type": "experiment",
           "meta": {
-            "experiment": "Manually curate and send a weekly digest to 5 team leads for 4 weeks, then survey them",
-            "signal": "4 out of 5 team leads rate the digest as 'very useful' and want it automated",
+            "experiment": "Create a clickable prototype with a search bar and measure user engagement through a usability testing session with 10 participants",
+            "signal": "Increase in successful feature discovery rate by 20% within the test group",
             "effort": "Small",
             "id": "opp_3_exp_1"
+          }
+        },
+        {
+          "name": "If we implement a feature suggestion dropdown on the main navigation, then all users will easily find specific features without navigating through multiple menus because it provides immediate access to frequently used features",
+          "type": "experiment",
+          "meta": {
+            "experiment": "Conduct an A/B test with 1000 users where 50% see the feature suggestion dropdown and measure the difference in click-through rates to specific features",
+            "signal": "25% reduction in average clicks to reach a specific feature for the test group",
+            "effort": "Medium",
+            "id": "opp_3_exp_2"
+          }
+        },
+        {
+          "name": "If we add a 'Recently Used' section to the main dashboard, then all users will quickly access their most frequently used features without excessive navigation because it prioritizes their most common actions",
+          "type": "experiment",
+          "meta": {
+            "experiment": "Run a fake door test by adding a 'Recently Used' button that doesn't actually work yet and measure the click-through rate on this button over a week",
+            "signal": "At least 30% of users click on the 'Recently Used' button, indicating demand for quick access to frequently used features",
+            "effort": "Small",
+            "id": "opp_3_exp_3"
+          }
+        }
+      ]
+    },
+    {
+      "name": "I want to have a clear overview of my team's work and progress in one place",
+      "type": "opportunity",
+      "meta": {
+        "evidence": "There's no single view that shows me my whole team. I have to go into each person's profile or each project separately.",
+        "customer_segment": "Managers",
+        "id": "opp_4"
+      },
+      "children": [
+        {
+          "name": "If we build a team dashboard, then Managers will regularly check the platform because they can see their team's work and progress in one place",
+          "type": "experiment",
+          "meta": {
+            "experiment": "Create a clickable prototype of the team dashboard and conduct usability testing with 5 managers",
+            "signal": "Increase in weekly active users by 15% within 2 weeks of launching the dashboard",
+            "effort": "Small",
+            "id": "opp_4_exp_1"
+          }
+        },
+        {
+          "name": "If we provide a customizable team overview page, then Managers will be more likely to use the platform daily because they can prioritize their team's tasks and projects",
+          "type": "experiment",
+          "meta": {
+            "experiment": "Conduct an A/B test with 20% of managers, where the treatment group has access to the customizable team overview page",
+            "signal": "25% increase in daily active users among the treatment group within 1 week",
+            "effort": "Medium",
+            "id": "opp_4_exp_2"
+          }
+        },
+        {
+          "name": "If we send weekly team progress summaries to managers, then Managers will be more engaged with the platform because they receive regular updates on their team's work",
+          "type": "experiment",
+          "meta": {
+            "experiment": "Design a fake door test where managers can opt-in to receive weekly team progress summaries, and measure the number of opt-ins",
+            "signal": "20% of managers opt-in to receive the weekly summaries within 1 week",
+            "effort": "Small",
+            "id": "opp_4_exp_3"
+          }
+        },
+        {
+          "name": "If we integrate a team performance metrics section into the dashboard, then Managers will spend more time on the platform because they can track their team's performance in real-time",
+          "type": "experiment",
+          "meta": {
+            "experiment": "Conduct a usability testing session with 3 managers to validate the team performance metrics section",
+            "signal": "Average session duration increases by 30% among managers within 2 weeks of launching the team performance metrics section",
+            "effort": "Medium",
+            "id": "opp_4_exp_4"
+          }
+        }
+      ]
+    },
+    {
+      "name": "I need to be able to quickly understand what's changed since I last logged in, without having to manually search for updates",
+      "type": "opportunity",
+      "meta": {
+        "evidence": "A team digest. Show me what changed since I last logged in. Bullet points. Who moved what, what got completed, what's newly blocked.",
+        "customer_segment": "Managers",
+        "id": "opp_5"
+      },
+      "children": [
+        {
+          "name": "If we build a 'Since You Last Logged In' dashboard, then Managers will regularly log in to check updates because it saves them time and effort",
+          "type": "experiment",
+          "meta": {
+            "experiment": "Create a clickable prototype of the dashboard and share it with 50 managers, asking for feedback and usage intent",
+            "signal": "Increase in weekly active users among the test group, with at least 30% reporting they would use the feature daily",
+            "effort": "Small",
+            "id": "opp_5_exp_1"
+          }
+        },
+        {
+          "name": "If we send a weekly team digest email with updates since last login, then Managers will feel more connected to their team's progress because they're informed without extra effort",
+          "type": "experiment",
+          "meta": {
+            "experiment": "Design and send a fake team digest email to 100 managers, measuring open rates, click-through rates, and feedback responses",
+            "signal": "At least 40% of recipients open the email, with 20% clicking through to the platform, and positive feedback from 30% of respondents",
+            "effort": "Small",
+            "id": "opp_5_exp_2"
+          }
+        },
+        {
+          "name": "If we implement an in-app notification system highlighting changes since last login, then Managers will be more likely to engage with the platform regularly because they're notified of relevant updates",
+          "type": "experiment",
+          "meta": {
+            "experiment": "Develop a minimal version of the notification system, testing it with 20 managers, and observing their engagement patterns over two weeks",
+            "signal": "An increase of at least 25% in the number of days managers log in per week, with at least 80% of them interacting with the notifications",
+            "effort": "Medium",
+            "id": "opp_5_exp_3"
           }
         }
       ]
