@@ -29,7 +29,7 @@ INPUTS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file
 OKR_FILE = os.path.join(INPUTS_DIR, "okr.md")
 INTERVIEWS_DIR = os.path.join(INPUTS_DIR, "interviews")
 CONTEXT_DIR = os.path.join(INPUTS_DIR, "context")
-OUTPUT_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "web", "tree_data.json")
+OUTPUT_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "docs", "tree_data.json")
 
 
 def load_inputs() -> tuple[str, str, str]:
@@ -141,6 +141,18 @@ def run():
     print(f"[orchestrator] OKR text: {len(okr_text)} chars")
     print(f"[orchestrator] Interview text: {len(interview_text)} chars")
     print(f"[orchestrator] Context text: {len(context_text)} chars\n")
+
+    # ── Input validation ───────────────────────────────────────────
+    if len(okr_text.strip()) < 20:
+        raise ValueError(
+            "[orchestrator] OKR text is too short (minimum 20 characters). "
+            "Provide a meaningful OKR or business outcome before running the pipeline."
+        )
+    if len(interview_text.strip()) < 50:
+        raise ValueError(
+            "[orchestrator] Interview text is too short (minimum 50 characters). "
+            "Provide at least one user interview or research note before running the pipeline."
+        )
 
     # ── Step 2: Subagent A — Outcome Tracker ──────────────────────
     print("[orchestrator] Running Subagent A: Outcome Tracker...")
