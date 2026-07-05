@@ -60,7 +60,7 @@ def ask(prompt: str, system_instruction: str = "", model: str = "gemini-2.0-flas
         except Exception as e:
             error_str = str(e)
             if "429" in error_str or "resource exhausted" in error_str.lower():
-                wait = 2 ** attempt * 5  # 5s, 10s, 20s
+                wait = 2 ** attempt * 15  # 15s, 30s, 60s
                 print(f"[gemini_client] Rate limit hit. Retrying in {wait}s... (attempt {attempt + 1}/{max_retries})")
                 time.sleep(wait)
                 if attempt == max_retries - 1:
