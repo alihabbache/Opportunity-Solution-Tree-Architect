@@ -23,6 +23,11 @@ import agents.outcome_tracker as outcome_tracker
 import agents.pain_point_synthesizer as pain_point_synthesizer
 import agents.experiment_ideator as experiment_ideator
 
+# Upper-bound character limits enforced before any LLM call
+MAX_OKR_CHARS       = 8_000
+MAX_INTERVIEW_CHARS = 20_000
+MAX_CONTEXT_CHARS   = 4_000
+
 # ── Paths ──────────────────────────────────────────────────────────────────────
 
 INPUTS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "inputs")
@@ -153,6 +158,11 @@ def run():
             "[orchestrator] Interview text is too short (minimum 50 characters). "
             "Provide at least one user interview or research note before running the pipeline."
         )
+
+    # Truncate to upper bounds before passing to agents (defence-in-depth)
+    okr_text       = okr_text[:MAX_OKR_CHARS]
+    interview_text = interview_text[:MAX_INTERVIEW_CHARS]
+    context_text   = context_text[:MAX_CONTEXT_CHARS]
 
     # ── Step 2: Subagent A — Outcome Tracker ──────────────────────
     print("[orchestrator] Running Subagent A: Outcome Tracker...")

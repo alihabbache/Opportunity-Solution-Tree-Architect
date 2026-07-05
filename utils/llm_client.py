@@ -11,6 +11,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Hard cap on tokens the model may generate per call.
+# Prevents runaway responses from consuming unexpected memory or tokens.
+MAX_TOKENS = 4096
+
+# Seconds to wait for the Groq HTTP response before raising a timeout error.
+# Prevents a hung connection from stalling the CI runner indefinitely.
+REQUEST_TIMEOUT = 60
+
 _client = None
 
 
@@ -54,16 +62,19 @@ def ask(prompt: str, system_instruction: str = "", model: str = "llama-3.3-70b-v
                 model=model,
                 messages=messages,
                 temperature=0.3,
+                max_tokens=MAX_TOKENS,
                 response_format={"type": "json_object"},
+                timeout=REQUEST_TIMEOUT,
             )
             return response.choices[0].message.content
         except RateLimitError as e:
             wait = 2 ** attempt * 15  # 15s, 30s, 60s
-            print(f"[groq_client] Rate limit hit. Retrying in {wait}s... (attempt {attempt + 1}/{max_retries})")
+            print(f"[llm_client] Rate limit hit. Retrying in {wait}s... (attempt {attempt + 1}/{max_retries})")
             time.sleep(wait)
             if attempt == max_retries - 1:
                 raise
         except Exception as e:
+            print(f"[llm_client] Unexpected error: {type(e).__name__}: {e}")
             raise
 
     raise RuntimeError("Groq API call failed after maximum retries.")

@@ -22,8 +22,9 @@ on:
     paths:
       - "inputs/**"
 
+# Least-privilege: read-only by default; the commit step elevates via GITHUB_TOKEN
 permissions:
-  contents: write  # Required for the commit-back step
+  contents: read
 
 jobs:
   generate-ost:
@@ -32,12 +33,14 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7.0.0
+        # actions/checkout v4.2.2 — pinned to immutable commit SHA (supply-chain safety)
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v6.3.0
+        # actions/setup-python v5.3.0 — pinned to immutable commit SHA
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
         with:
           python-version: "3.11"
 
@@ -53,9 +56,16 @@ jobs:
         run: python agents/orchestrator.py
 
       - name: Commit generated tree back to repo
+        # This is the only step that needs write access; we elevate here explicitly.
+        # Token injected into the remote URL only (in-memory); never written to disk.
+        permissions:
+          contents: write
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "OST Architect Bot"
           git config user.email "actions@github.com"
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git add docs/tree_data.json
           if git diff --staged --quiet; then
             echo "No changes to commit — tree_data.json is up to date."
@@ -70,17 +80,24 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           python -c "
           import json
+
+          def safe(s):
+              # Sanitise LLM-generated strings before writing to the Actions summary.
+              # Strips newlines and pipes to prevent Markdown table injection and
+              # accidental GitHub Actions runner command injection.
+              return str(s).replace('|', '-').replace('\n', ' ').replace('\r', '').strip()[:120]
+
           with open('docs/tree_data.json') as f:
               tree = json.load(f)
           opportunities = tree.get('children', [])
           total_exp = sum(len(o.get('children', [])) for o in opportunities)
           print(f'| Field | Value |')
           print(f'|---|---|')
-          print(f'| **Outcome** | {tree[\"name\"]} |')
-          print(f'| **Metric** | {tree.get(\"meta\", {}).get(\"metric\", \"N/A\")} |')
+          print(f'| **Outcome** | {safe(tree[\"name\"])} |')
+          print(f'| **Metric** | {safe(tree.get(\"meta\", {}).get(\"metric\", \"N/A\"))} |')
           print(f'| **Opportunities** | {len(opportunities)} |')
           print(f'| **Experiments** | {total_exp} |')
-          print(f'| **Generated at** | {tree.get(\"generated_at\", \"N/A\")} |')
+          print(f'| **Generated at** | {safe(tree.get(\"generated_at\", \"N/A\"))} |')
           " >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "🌳 View your tree at: https://alihabbache.github.io/Opportunity-Solution-Tree-Architect/" >> $GITHUB_STEP_SUMMARY
+          echo "View your tree at: https://alihabbache.github.io/Opportunity-Solution-Tree-Architect/" >> $GITHUB_STEP_SUMMARY

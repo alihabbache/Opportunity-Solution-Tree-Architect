@@ -1,0 +1,49 @@
+# Local environment — NEVER commit real secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# User input files — may contain PII / confidential data
+# Keep .example files; ignore live data files
+inputs/interviews/*.md
+inputs/interviews/*.txt
+inputs/interviews/*.docx
+inputs/interviews/*.pdf
+inputs/context/*.md
+inputs/context/*.txt
+inputs/context/*.docx
+inputs/context/*.pdf
+/inputs/okr.md
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+
+# Generated output — never commit live tree data from local runs
+web/tree_data.json

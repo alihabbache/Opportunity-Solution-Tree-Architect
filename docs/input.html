@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src https://api.github.com; img-src 'self' data:; object-src 'none'; base-uri 'self'; frame-ancestors 'none';" />
+  <meta name="referrer" content="no-referrer" />
   <title>OST Architect — New Input</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -185,21 +187,6 @@
     }
     .run-link:hover { text-decoration: underline; }
 
-    #passphrase-gate {
-      background: #fffbeb;
-      border: 1px solid #fde68a;
-      border-radius: 8px;
-      padding: 20px 24px;
-      margin-bottom: 20px;
-    }
-    #passphrase-gate .field-label { color: #92400e; }
-    #passphrase-gate .field-hint  { color: #78350f; }
-    #passphrase-error {
-      font-size: 12px;
-      color: #cf222e;
-      margin-top: 6px;
-      min-height: 16px;
-    }
   </style>
 </head>
 <body>
@@ -208,7 +195,7 @@
   <span class="nav-title">&#127795; OST Architect</span>
   <span class="nav-links">
     <a href="index.html">&#8592; View Tree</a>
-    <a href="https://github.com/alihabbache/Opportunity-Solution-Tree-Architect" target="_blank">GitHub</a>
+    <a href="https://github.com/alihabbache/Opportunity-Solution-Tree-Architect" target="_blank" rel="noopener noreferrer">GitHub</a>
   </span>
 </nav>
 
@@ -219,16 +206,7 @@
     Submitting will trigger the OST pipeline on GitHub Actions and update your tree.
   </p>
 
-  <!-- Passphrase Gate -->
-  <div id="passphrase-gate">
-    <label class="field-label" for="passphrase-input">&#128272; Access Passphrase</label>
-    <p class="field-hint">Enter the access passphrase to unlock the pipeline.</p>
-    <input type="password" id="passphrase-input" placeholder="Passphrase..." autocomplete="off" />
-    <div id="passphrase-error"></div>
-  </div>
-
-  <!-- Main form — hidden until passphrase verified -->
-  <div id="main-form" style="display:none;">
+  <div id="main-form">
 
     <div class="info-box">
       <strong>How this works:</strong> Your text is sent directly to the GitHub Actions workflow via the GitHub API.
@@ -241,12 +219,13 @@
       <label class="field-label" for="pat-input">&#128274; GitHub Personal Access Token (PAT)</label>
       <p class="field-hint">
         Required to trigger the pipeline. Needs <code>repo</code> + <code>workflow</code> scope.<br>
-        Stored only in your browser's localStorage — never sent anywhere except GitHub's API.
-        <a href="https://github.com/settings/tokens/new?scopes=repo,workflow&description=OST+Architect" target="_blank" style="color:#92400e;">Generate a PAT</a>
+        Stored only in your browser's <strong>sessionStorage</strong> (cleared when this tab closes) — never sent anywhere except GitHub's API.<br>
+        Use a <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer" style="color:#92400e;">fine-grained PAT</a> scoped to this repo's Actions only for minimal permissions.
+        <a href="https://github.com/settings/tokens/new?scopes=repo,workflow&description=OST+Architect" target="_blank" rel="noopener noreferrer" style="color:#92400e;">Or generate a classic PAT</a>
       </p>
       <input type="password" id="pat-input" placeholder="ghp_..." autocomplete="new-password" />
       <div class="pat-actions">
-        <button id="save-pat-btn">Save to localStorage</button>
+        <button id="save-pat-btn">Save for this session</button>
         <button id="clear-pat-btn">Clear saved PAT</button>
       </div>
     </div>
@@ -263,8 +242,8 @@
     <div class="card">
       <label class="field-label" for="interview-text">&#128172; User Interview Notes <span style="color:#cf222e;">*</span></label>
       <p class="field-hint">Paste raw interview notes, quotes, or summaries. Include as much detail as you have.</p>
-      <textarea id="interview-text" rows="12" maxlength="12000" placeholder="Participant: Sarah, Designer&#10;---&#10;&quot;I spend 3-4 minutes every morning just figuring out where I left off...&quot;"></textarea>
-      <div class="char-counter"><span id="interview-count">0</span> / 12000</div>
+      <textarea id="interview-text" rows="12" maxlength="20000" placeholder="Participant: Sarah, Designer&#10;---&#10;&quot;I spend 3-4 minutes every morning just figuring out where I left off...&quot;"></textarea>
+      <div class="char-counter"><span id="interview-count">0</span> / 20,000</div>
     </div>
 
     <!-- Context -->
@@ -275,165 +254,27 @@
       <div class="char-counter"><span id="context-count">0</span> / 4000</div>
     </div>
 
+    <!-- Privacy notice -->
+    <div class="info-box" style="background:#fff8f0;border-color:#fde68a;color:#78350f;margin-bottom:16px;">
+      <strong>Data &amp; Privacy:</strong> Your OKR and interview text are sent to the Groq API (hosted LLM inference) for processing.
+      Do not include names, emails, or other personally identifiable information (PII) in your interview notes.
+      Groq's data retention policy is available at <a href="https://groq.com/privacy-policy/" target="_blank" rel="noopener noreferrer" style="color:#92400e;">groq.com/privacy-policy</a>.
+    </div>
+
     <!-- Submit -->
     <div class="submit-row">
       <button class="primary" id="submit-btn">&#9654; Trigger Pipeline</button>
       <span id="status-msg"></span>
     </div>
 
-    <a class="run-link" id="run-link" href="https://github.com/alihabbache/Opportunity-Solution-Tree-Architect/actions" target="_blank" style="display:none;">
+    <a class="run-link" id="run-link" href="https://github.com/alihabbache/Opportunity-Solution-Tree-Architect/actions" target="_blank" rel="noopener noreferrer" style="display:none;">
       View pipeline run on GitHub Actions &#8594;
     </a>
 
   </div><!-- /#main-form -->
 </div>
 
-<script>
-const REPO_OWNER = "alihabbache";
-const REPO_NAME  = "Opportunity-Solution-Tree-Architect";
-const WORKFLOW_FILE = "generate-ost.yml";
-const PAT_KEY = "ost_architect_pat";
-
-// SHA-256 of "OSTArchitect2025"
-const EXPECTED_HASH = "59128aad103d8a73a10d2d5f8bb537db000e5d263241cac57c279be6bcd0443f";
-
-// ── Passphrase gate ────────────────────────────────────────────────────────
-async function sha256hex(str) {
-  const msgBuffer = new TextEncoder().encode(str);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-}
-
-function unlockForm() {
-  document.getElementById("passphrase-gate").style.display = "none";
-  document.getElementById("main-form").style.display = "block";
-  // Load saved PAT only after form is visible
-  const saved = sessionStorage.getItem(PAT_KEY);
-  if (saved) document.getElementById("pat-input").value = saved;
-}
-
-// Check if already unlocked this session
-if (sessionStorage.getItem("ost_unlocked") === "1") {
-  unlockForm();
-} else {
-  const passphraseInput = document.getElementById("passphrase-input");
-  const passphraseError = document.getElementById("passphrase-error");
-
-  passphraseInput.addEventListener("input", async () => {
-    const val = passphraseInput.value;
-    if (!val) {
-      passphraseError.textContent = "";
-      return;
-    }
-    const hash = await sha256hex(val);
-    if (hash === EXPECTED_HASH) {
-      passphraseError.textContent = "";
-      sessionStorage.setItem("ost_unlocked", "1");
-      unlockForm();
-    } else {
-      passphraseError.textContent = "Incorrect passphrase.";
-    }
-  });
-}
-
-// ── PAT persistence ────────────────────────────────────────────────────────
-const patInput = document.getElementById("pat-input");
-
-document.getElementById("save-pat-btn").addEventListener("click", () => {
-  const val = patInput.value.trim();
-  if (!val) { alert("Enter a PAT first."); return; }
-  sessionStorage.setItem(PAT_KEY, val);
-  setStatus("PAT saved for this session.", "success");
-});
-
-document.getElementById("clear-pat-btn").addEventListener("click", () => {
-  sessionStorage.removeItem(PAT_KEY);
-  patInput.value = "";
-  setStatus("PAT cleared.", "");
-});
-
-// ── Char counters ──────────────────────────────────────────────────────────
-function wireCounter(textareaId, counterId) {
-  const ta = document.getElementById(textareaId);
-  const counter = document.getElementById(counterId);
-  ta.addEventListener("input", () => {
-    counter.textContent = ta.value.length;
-  });
-}
-wireCounter("okr-text",       "okr-count");
-wireCounter("interview-text", "interview-count");
-wireCounter("context-text",   "context-count");
-
-// ── Submit ─────────────────────────────────────────────────────────────────
-document.getElementById("submit-btn").addEventListener("click", async () => {
-  const pat      = patInput.value.trim();
-  const okr      = document.getElementById("okr-text").value.trim();
-  const interview = document.getElementById("interview-text").value.trim();
-  const context  = document.getElementById("context-text").value.trim();
-
-  if (!pat) {
-    setStatus("A GitHub PAT is required to trigger the pipeline.", "error");
-    return;
-  }
-  if (!okr) {
-    setStatus("OKR / Business Outcome text is required.", "error");
-    return;
-  }
-  if (!interview) {
-    setStatus("User Interview Notes are required.", "error");
-    return;
-  }
-
-  const btn = document.getElementById("submit-btn");
-  btn.disabled = true;
-  setStatus("Triggering pipeline...", "");
-
-  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/${WORKFLOW_FILE}/dispatches`;
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Accept": "application/vnd.github+json",
-        "Authorization": "Bearer " + pat,
-        "X-GitHub-Api-Version": "2022-11-28",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ref: "main",
-        inputs: {
-          okr_text:       okr,
-          interview_text: interview,
-          context_text:   context,
-        },
-      }),
-    });
-
-    if (response.status === 204) {
-      setStatus("Pipeline triggered! Your tree will be ready in ~2 minutes.", "success");
-      document.getElementById("run-link").style.display = "inline-block";
-      // Auto-save PAT for this session
-      sessionStorage.setItem(PAT_KEY, pat);
-    } else {
-      const body = await response.json().catch(() => ({}));
-      const msg = body.message || `HTTP ${response.status}`;
-      setStatus("GitHub API error: " + msg, "error");
-    }
-  } catch (err) {
-    setStatus("Network error: " + err.message, "error");
-  } finally {
-    btn.disabled = false;
-  }
-});
-
-// ── Helper ────────────────────────────────────────────────────────────────
-function setStatus(msg, type) {
-  const el = document.getElementById("status-msg");
-  el.textContent = msg;
-  el.className = type;
-}
-</script>
+<script src="input.js"></script>
 
 </body>
 </html>

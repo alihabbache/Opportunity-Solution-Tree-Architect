@@ -7,6 +7,9 @@ All agents receive a uniform string regardless of the original format.
 import os
 import pathlib
 
+# Reject files larger than 5 MB to guard against zip-bomb / DoS inputs
+MAX_FILE_BYTES = 5 * 1024 * 1024  # 5 MB
+
 
 def parse_file(filepath: str) -> str:
     """
@@ -28,6 +31,12 @@ def parse_file(filepath: str) -> str:
 
     if not path.exists():
         raise FileNotFoundError(f"File not found: {filepath}")
+
+    if path.stat().st_size > MAX_FILE_BYTES:
+        raise ValueError(
+            f"File too large: {path.name} ({path.stat().st_size:,} bytes). "
+            f"Maximum allowed size is {MAX_FILE_BYTES // (1024 * 1024)} MB."
+        )
 
     suffix = path.suffix.lower()
 
@@ -71,6 +80,8 @@ def parse_directory(directory: str, recursive: bool = True) -> str:
                 if content.strip():
                     texts.append(f"--- {file_path.name} ---\n{content}")
                     print(f"[file_parser] Parsed: {file_path.name}")
+            except MemoryError:
+                raise
             except Exception as e:
                 print(f"[file_parser] Warning: Could not parse {file_path.name}: {e}")
 
@@ -104,9 +115,9 @@ def _parse_docx(path: pathlib.Path) -> str:
 def _parse_pdf(path: pathlib.Path) -> str:
     """Extract text from a PDF file."""
     try:
-        from PyPDF2 import PdfReader
+        from pypdf import PdfReader
     except ImportError:
-        raise ImportError("PyPDF2 is required to parse .pdf files. Run: pip install PyPDF2")
+        raise ImportError("pypdf is required to parse .pdf files. Run: pip install pypdf")
 
     reader = PdfReader(str(path))
     pages = []

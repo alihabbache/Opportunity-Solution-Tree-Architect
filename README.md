@@ -2,7 +2,7 @@
 
 A zero-cost, GitHub-native AI pipeline that maps business outcomes directly to technical execution — visually.
 
-Built for Product Managers. Runs entirely on GitHub Actions + GitHub Pages. Powered by Google Gemini.
+Built for Product Managers. Runs entirely on GitHub Actions + GitHub Pages. Powered by Groq (Llama 3.3 70B).
 
 ---
 
@@ -37,10 +37,10 @@ Business Outcome (OKR)
 ### 1. Fork this repo
 Click **Fork** on GitHub. Keep it public (free Actions minutes).
 
-### 2. Add your Gemini API key as a GitHub Secret
+### 2. Add your Groq API key as a GitHub Secret
 - Repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**
-- Name: `GEMINI_API_KEY`
-- Value: your key from [aistudio.google.com](https://aistudio.google.com)
+- Name: `GROQ_API_KEY`
+- Value: your key from [console.groq.com](https://console.groq.com)
 
 ### 3. Add your inputs
 Drop files into:
@@ -81,7 +81,7 @@ Paste your OKR and interview notes directly in the browser. Enter your GitHub PA
 │   └── experiment_ideator.py   # Subagent C
 ├── utils/
 │   ├── file_parser.py          # Parses .md, .docx, .pdf → plain text
-│   └── gemini_client.py        # Gemini API wrapper
+│   └── llm_client.py           # Groq API wrapper
 ├── web/
 │   ├── index.html              # D3.js interactive OST tree
 │   ├── input.html              # Web paste form
@@ -96,8 +96,8 @@ Paste your OKR and interview notes directly in the browser. Enter your GitHub PA
 
 | Variable | Where | Purpose |
 |---|---|---|
-| `GEMINI_API_KEY` | GitHub Secret | Authenticates Gemini API in Actions |
-| GitHub PAT | Browser localStorage (input.html only) | Triggers workflow from web form |
+| `GROQ_API_KEY` | GitHub Secret | Authenticates Groq API in Actions |
+| GitHub PAT | Browser sessionStorage (input.html only) | Triggers workflow from web form |
 
 > ⚠️ Never commit your API key or PAT to the repository.
 
@@ -115,7 +115,7 @@ pip install -r requirements.txt
 
 # Set your API key
 cp .env.example .env
-# Edit .env and add your GEMINI_API_KEY
+# Edit .env and add your GROQ_API_KEY
 
 # Run the pipeline locally
 python agents/orchestrator.py
@@ -128,7 +128,7 @@ open web/index.html
 
 ## Stack
 
-- **AI**: Google Gemini 1.5 Pro (via `google-generativeai` SDK)
+- **AI**: Groq — Llama 3.3 70B (via `groq` SDK)
 - **Compute**: GitHub Actions (free tier)
 - **Hosting**: GitHub Pages (free)
 - **Visualization**: D3.js v7
